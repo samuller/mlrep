@@ -20,8 +20,8 @@ EOF
 ########
 if ! command -v rg &> /dev/null
 then
-	echo "Ripgrep (rg) not found."
-	echo "Installation required, e.g. apt-get install ripgrep"
+	echo >&2 "Ripgrep (rg) not found."
+	echo >&2 "Installation required, e.g. apt-get install ripgrep"
 	exit
 fi
 
@@ -74,8 +74,8 @@ while [[ $1 == -* ]]; do
 			exit
 			;;
 		* ) 
-			echo "Unknown parameter: $1"
-			echo "Use --help to see parameter usage."
+			echo >&2 "Unknown parameter: $1"
+			echo >&2 "Use --help to see parameter usage."
 			exit 1
 	esac
 done
@@ -83,8 +83,8 @@ done
 # Process remaining arguments which should contain files to process
 # At least one file is expected
 if [ $# -eq 0 ]; then
-	echo "No files provided to process."
-	echo "Use --help to see parameter usage."
+	echo >&2 "No files provided to process."
+	echo >&2 "Use --help to see parameter usage."
 	# "No files" is not considered an error state
 	exit 0
 fi
