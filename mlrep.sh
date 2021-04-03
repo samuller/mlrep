@@ -28,6 +28,7 @@ fi
 ########
 # Process command-line arguments
 ########
+in_place_overwrite=
 find_regex=
 replace_string=
 
@@ -44,6 +45,7 @@ function usage
 	                  	from regular expression. E.g. "\$1".
 	
 	Options:
+	-i, --inplace	Directly write replacements to files in-place.
 	    --help   	Display this help and exit.
 	    --version
 	EOF
@@ -55,6 +57,10 @@ function usage
 # Process first parameters starting with dash ("-")
 while [[ $1 == -* ]]; do
 	case $1 in
+		-i | --inplace )
+			in_place_overwrite=true
+			shift
+			;;
 		-f | --find )
 			shift
 			find_regex=$1
@@ -99,11 +105,16 @@ do
 
   # Run Ripgrep in replacement mode on each file.
   # Ripgrep usually only shows lines that match the regex (along with 
-  # the linenumber), so we have to add arguments to control these.
-  rg --replace "$replace_string" --passthru --no-line-number --multiline --multiline-dotall "$find_regex" "$filename" >> output.txt
+  # the linenumber), so we have to add arguments to control these. 
+  OUTPUT=$(rg --replace "$replace_string" --passthru --no-line-number --multiline --multiline-dotall "$find_regex" "$filename")
   if [ $? -eq 2 ]; then
 	echo "Error"
 	exit 2
   fi
-  
+
+  # If in-place is set and there are no errors, overwrite file  
+  if [ "$in_place_overwrite" = true ]; then
+    echo "$OUTPUT" > "$filename"
+  fi
+
 done
